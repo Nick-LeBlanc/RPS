@@ -5,11 +5,7 @@ disconnect.onclick = function testfunc(){
     webSocket.close();
     disconnect.disabled = true;
 }
-window.addEventListener('keypress',(keyevent)=>{
-    if(!(webSocket == null)){
-        webSocket.send(keyevent.key);
-    }
-})
+
 
 webSocket.addEventListener('message', (sendevent) => {
         console.log('Message from server ', sendevent.data);

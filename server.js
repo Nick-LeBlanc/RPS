@@ -26,6 +26,9 @@ class room{
     this.id=id;
     this.player1=player1;
     this.player2=player2;
+    this.points1 = 0;
+    this.points2 = 0;
+
     player1.send(`connected to room: ${this.id} <br>`);
     player2.send(`connected to room: ${this.id} <br>`);
   }
@@ -55,18 +58,49 @@ class room{
     }
   }
 
-  gameloop(){
-    let points1 = 0;
-    let points2 = 0;
+  async gameloop(){
+    
+    let choice1 = await this.getChoice(this.player1);
+    let choice2 = await this.getChoice(this.player2);
 
-    this.player1.on('message', (p1Data) => {
-      this.player1.send("Waiting for other player<br>")
-      this.player2.on('message', (p2Data) => {
-        
-       });
+    this.player1.on('message', (data) => {
+      if(choice1 !== undefined){
+        console.log(choice1);
+        return;
+      }else{
+        console.log(choice2);
+        return;
+      }
      });
 
+     this.player2.on('message', (data) => {
+      if(choice2 !== undefined){
+        console.log(choice2);
+        return;
+      }else{
+        console.log(choice1);
+        return;
+      }
+     });
+
+     
+    // this.player1.on('message', (data) => {
+    //     console.log(choice2, choice1);
+    //     return;
+    //  });
+
+
   }
+
+  async getChoice(player){
+      await player.on('message', (data) => {
+        let choice = dec.decode(data);
+        if(choice =="rock" || choice =="paper" || choice =="scissors" ){
+          return choice;
+        }
+       });
+  }
+
 }
 const rooms = new Set();
 
@@ -80,7 +114,7 @@ sockserver.on('connection', (ws) => {
     }));
 
   }else{
-    console.log("player connected");
+    // console.log("player connected");
     ws.send("Waiting for another player<br>");
     ws.on('close', () => {
       connections.delete(ws);
@@ -88,7 +122,7 @@ sockserver.on('connection', (ws) => {
   }
 
   rooms.forEach((newRoom) =>{
-    newRoom.write();
+    newRoom.gameloop();
     newRoom.close();
   });
  
