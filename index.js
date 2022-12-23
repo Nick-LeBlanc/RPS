@@ -90,7 +90,7 @@ let choices = {
 var targetProxy = new Proxy(choices, {
   set: function (target, key, value) {
       target[key] = value;
-      console.log(choices);
+    //   console.log(choices);
       if(choices.you !== null && choices.opp !==null){
         //tie state
         if(choices.you === choices.opp){
